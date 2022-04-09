@@ -39,7 +39,7 @@
 
 set_global_assignment -name FAMILY "MAX V"
 set_global_assignment -name DEVICE AUTO
-set_global_assignment -name TOP_LEVEL_ENTITY DUT
+set_global_assignment -name TOP_LEVEL_ENTITY RAM
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 20.1.1
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "19:15:53  APRIL 08, 2022"
 set_global_assignment -name LAST_QUARTUS_VERSION "20.1.1 Lite Edition"
@@ -59,10 +59,6 @@ set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id Testbench
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME Testbench -section_id Testbench
 set_global_assignment -name EDA_TEST_BENCH_FILE ALU/TRACEFILE.txt -section_id Testbench
 set_global_assignment -name EDA_TEST_BENCH_FILE ALU/Testbench.vhdl -section_id Testbench
-set_global_assignment -name TEXT_FILE ALU/TRACEFILE.txt
-set_global_assignment -name VHDL_FILE ALU/Testbench.vhdl
-set_global_assignment -name VHDL_FILE ALU/fa.vhdl
-set_global_assignment -name VHDL_FILE ALU/DUT.vhdl
-set_global_assignment -name VHDL_FILE ALU/alu_16.vhdl
-set_global_assignment -name VHDL_FILE ALU/adder_16.vhdl
-set_global_assignment -name VHDL_FILE ALU/adder_4.vhdl
+set_global_assignment -name VHDL_FILE RAM/RAM.vhdl
+set_global_assignment -name TIMING_ANALYZER_MULTICORNER_ANALYSIS OFF
+set_global_assignment -name SMART_RECOMPILE OFF
