@@ -1,43 +1,36 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity demux8x1_16 is
-	port(A: in std_logic_vector(15 downto 0);
-		  sel: in std_logic_vector(2 downto 0);
-		  S0, S1, S2, S3, S4, S5, S6, S7: out std_logic_vector(15 downto 0));
-end entity demux8x1_16;
+entity demux8x1_1 is
+	port(sel: in std_logic_vector(2 downto 0);
+		  S: out std_logic_vector(7 downto 0));
+end entity demux8x1_1;
 
-architecture beh of  demux8x1_16 is
-	signal t0, t1, t2, t3, t4, t5, t6, t7: std_logic_vector(15 downto 0) := "0000000000000000";
+architecture beh of  demux8x1_1 is
+	signal temp: std_logic_vector(7 downto 0);
 begin
-	process(A, sel, t0, t1, t2, t3, t4, t5, t6, t7)
-	begin
+	process(sel)
+	begin	
 		case sel is
 			when "000" =>
-				t0 <= A;
-			when "001" =>
-				t1 <= A;
-			when "010" =>
-				t2 <= A;
-			when "011" =>
-				t3 <= A;
-			when "100" =>
-				t4 <= A;
-			when "101" =>
-				t5 <= A;
-			when "110" =>
-				t6 <= A;
-			when "111" =>
-				t7 <= A;
+				temp <= "10000000";
+			when "000" =>
+				temp <= "01000000";
+			when "000" =>
+				temp <= "00100000";
+			when "000" =>
+				temp <= "00010000";
+			when "000" =>
+				temp <= "00001000";
+			when "000" =>
+				temp <= "00000100";
+			when "000" =>
+				temp <= "00000010";
+			when "000" =>
+				temp <= "00000001";
 			when others =>
-		end case;	
+				temp <= "00000000";
+		end case;
 	end process;
-	S0 <= t0;
-	S1 <= t1;
-	S2 <= t2;
-	S3 <= t3;
-	S4 <= t4;
-	S5 <= t5;
-	S6 <= t6;
-	S7 <= t7;
+	S <= temp;
 end beh;

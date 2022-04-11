@@ -60,14 +60,16 @@ set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME Testbench -section_id Tes
 set_global_assignment -name VHDL_FILE RegisterBank/register.vhdl
 set_global_assignment -name VHDL_FILE RegisterBank/DUT.vhdl
 set_global_assignment -name VHDL_FILE RegisterBank/Testbench.vhdl
-set_global_assignment -name EDA_TEST_BENCH_FILE ALU/TRACEFILE.txt -section_id Testbench
-set_global_assignment -name EDA_TEST_BENCH_FILE ALU/Testbench.vhdl -section_id Testbench
 set_global_assignment -name EDA_TEST_BENCH_NAME "Testbench-RegisterBank" -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id "Testbench-RegisterBank"
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME Testbench -section_id "Testbench-RegisterBank"
-set_global_assignment -name EDA_TEST_BENCH_FILE RegisterBank/TRACEFILE.txt -section_id "Testbench-RegisterBank"
-set_global_assignment -name EDA_TEST_BENCH_FILE RegisterBank/Testbench.vhdl -section_id "Testbench-RegisterBank"
 set_global_assignment -name VHDL_FILE RegisterBank/mux.vhdl
 set_global_assignment -name VHDL_FILE RegisterBank/demux.vhdl
 set_global_assignment -name VHDL_FILE RegisterBank/bank.vhdl
 set_global_assignment -name VHDL_FILE RAM/RAM.vhdl
+
+set_global_assignment -name VHDL_FILE RegisterBank/regbank.vhdl
+set_global_assignment -name EDA_TEST_BENCH_FILE ALU/TRACEFILE.txt -section_id Testbench
+set_global_assignment -name EDA_TEST_BENCH_FILE ALU/Testbench.vhdl -section_id Testbench
+set_global_assignment -name EDA_TEST_BENCH_FILE RegisterBank/TRACEFILE.txt -section_id "Testbench-RegisterBank"
+set_global_assignment -name EDA_TEST_BENCH_FILE RegisterBank/Testbench.vhdl -section_id "Testbench-RegisterBank"
