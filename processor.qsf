@@ -39,7 +39,7 @@
 
 set_global_assignment -name FAMILY "MAX V"
 set_global_assignment -name DEVICE AUTO
-set_global_assignment -name TOP_LEVEL_ENTITY DUT
+set_global_assignment -name TOP_LEVEL_ENTITY IR
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 20.1.1
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "19:15:53  APRIL 08, 2022"
 set_global_assignment -name LAST_QUARTUS_VERSION "20.1.1 Lite Edition"
@@ -65,3 +65,4 @@ set_global_assignment -name EDA_TEST_BENCH_FILE ALU/TRACEFILE.txt -section_id Te
 set_global_assignment -name EDA_TEST_BENCH_FILE ALU/Testbench.vhdl -section_id Testbench
 set_global_assignment -name EDA_TEST_BENCH_FILE RegisterBank/TRACEFILE.txt -section_id "Testbench-RegisterBank"
 set_global_assignment -name EDA_TEST_BENCH_FILE RegisterBank/Testbench.vhdl -section_id "Testbench-RegisterBank"
+set_global_assignment -name VHDL_FILE IR/IR.vhdl
