@@ -39,7 +39,11 @@
 
 set_global_assignment -name FAMILY "MAX V"
 set_global_assignment -name DEVICE AUTO
+<<<<<<< HEAD
 set_global_assignment -name TOP_LEVEL_ENTITY DUT
+=======
+set_global_assignment -name TOP_LEVEL_ENTITY ALU
+>>>>>>> 38c8b14052bbd2be6b00c83787bf0d07d54fb8d4
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 20.1.1
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "19:15:53  APRIL 08, 2022"
 set_global_assignment -name LAST_QUARTUS_VERSION "20.1.1 Lite Edition"
@@ -69,9 +73,19 @@ set_global_assignment -name EDA_TEST_BENCH_FILE ALU/TRACEFILE.txt -section_id Te
 set_global_assignment -name EDA_TEST_BENCH_FILE ALU/Testbench.vhdl -section_id Testbench
 set_global_assignment -name EDA_TEST_BENCH_FILE RegisterBank/TRACEFILE.txt -section_id "Testbench-RegisterBank"
 set_global_assignment -name EDA_TEST_BENCH_FILE RegisterBank/Testbench.vhdl -section_id "Testbench-RegisterBank"
+<<<<<<< HEAD
 set_global_assignment -name EDA_TEST_BENCH_NAME "Testbench-Controller" -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME controller -section_id "Testbench-Controller"
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME Testbench -section_id "Testbench-Controller"
 set_global_assignment -name EDA_TEST_BENCH_FILE Controller/Testbench.vhdl -section_id "Testbench-Controller"
 set_global_assignment -name EDA_TEST_BENCH_FILE Controller/TRACEFILE.txt -section_id "Testbench-Controller"
 set_global_assignment -name VHDL_FILE Controller/counter.vhdl
+=======
+set_global_assignment -name VHDL_FILE ALU/ALU.vhdl
+set_global_assignment -name VHDL_FILE register_bank/register_bank.vhdl
+set_global_assignment -name VHDL_FILE RAM/RAM.vhdl
+set_global_assignment -name VHDL_FILE IR/IR.vhdl
+set_global_assignment -name VHDL_FILE ALU/fa.vhdl
+set_global_assignment -name VHDL_FILE ALU/adder_16.vhdl
+set_global_assignment -name VHDL_FILE ALU/adder_4.vhdl
+>>>>>>> 38c8b14052bbd2be6b00c83787bf0d07d54fb8d4
