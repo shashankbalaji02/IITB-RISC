@@ -5,149 +5,375 @@ use ieee.numeric_std.all;
 entity controller is
 	port (IR: in std_logic_vector(15 downto 0);
 			clk, cy, zflag: in std_logic;
-			A1, A2, A3, MUX_ALU: out std_logic_vector(2 downto 0);
-			Ain, Din, inc_PC, inc_SP, C, Z, MemDin, Mem_Dout_IR, ALU_T: out std_logic; 
-			MUX_Din, MUX_Ain: out std_logic_vector(1 downto 0);
-			count: out std_logic_vector(3 downto 0));
+			S: out std_logic_vector(27 downto 0));
 end entity controller;
 
 architecture beh of controller is
----A1 address for read
----A2 same as above
----A3 write
----Din write enable to reg bank
----inc_PC if we need to inc PC or not
----inc_SP same for SP
----C if carry has to be set 
----Z same for zero
----MUX_ALU second address of ALU
----Mem_Din reg to mem 
----Mem_Dout_IR to write to IR
----MUX_Din the input going to reg bank 
----ALU_T to store the output of ALU in T(temp reg)
----MUX_Ain where address lines are coming from
 
-component counter is
-	port (rst,clk: in std_logic; 
-			S: out std_logic_vector(3 downto 0));
-end component counter;
-
-signal opcode, temp: std_logic_vector(3 downto 0);
-signal mode: std_logic_vector(1 downto 0);
-signal tA1, tA2, tA3, tMUX_ALU: std_logic_vector(2 downto 0) := "000";
-signal tAin, tDin, tinc_PC, tinc_SP, tC, tZ, tMemDin, tMem_Dout_IR, tALU_T, rst: std_logic := '0'; 
-signal tMUX_Din, tMUX_Ain: std_logic_vector(1 downto 0) := "00";
-
-
+	type fsm_states is (S0, S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15, S16, S17, S18, S19, S20, S21,
+							  S22, S23, S24, S25, S26, S27, S28, S29, S30, S31, S32, S33, S34, S35, S36, S37, S38,
+						     S39, S40, S41, S42, S43, S44, S45, S46, S47, S48, S49, S50, S51, S52, S53, S54, S55, S56);
+	
+	signal state, next_state: fsm_states;
+	signal opcode: std_logic_vector(3 downto 0);
+	signal mode: std_logic_vector(1 downto 0);
+	signal temp: std_logic_vector(27 downto 0);
+	
 begin
 	
-	counter1: counter port map (rst, clk, temp);
-
-	opcode(3 downto 0) <= IR(15 downto 12);
-	mode(1 downto 0) <= IR(1 downto 0);
-	process(temp)
-		begin
-			if(temp = "0001") then
-				tMUX_Ain <= "00";
-				tAin <= '1';
-				tMem_Dout_IR <= '1';
-			elsif(temp = "0010") then 
-				tAin <= '0';
-				tMem_Dout_IR <= '0';
-				tinc_PC <= '1';
-			elsif(temp = "0011") then
-				tinc_PC <= '0';
-			end if;
-		end process;
+	opcode <= IR(15 downto 12);
+	mode <= IR(1 downto 0);
+	
+	process(clk, next_state) --next state progress
+	begin
+		if(rising_edge(clk)) then
+			state <= next_state;
+		end if;
+	end process;
+	
+	process(state, temp, cy, zflag, IR) --state definition
+	begin
 		
-	process(opcode, temp, mode)
-		begin
-			case opcode is
-				when "0001" =>  --ADD/ADC/ADZ/ADL
-					if temp = "0011" then
-						tA1 <= IR(5 downto 3);
-						tA2 <= IR(8 downto 6);
-						tA3 <= IR(11 downto 9);
-						tALU_T <= '1';
-						tC <= '1';
-						tZ <= '1';
-					elsif temp = "0100" then
-						tA1 <= "000";
-						tA2 <= "000";
-						tA3 <= "000";
-						tALU_T <= '0';
-						tC <= '0';
-						tZ <= '0';
-						case mode is
-							when "00" =>
-								tDin <= '1';
-							when "01" =>
-								if cy = '1' then
-									tDin <= '1';
-								end if;
-							when "10" =>
-								if zflag = '1' then 
-									tDin <= '1';
-								end if;
-							when "11" =>
-								tDin <= '1';
-								tMUX_ALU <= "001";
-							when others =>
-								tDin <= '0';
-						end case;
-					elsif temp = "0101" then
-						tDin <= '0';
-						tMUX_ALU <= "000";
-						rst <= '1';
-					end if;
-				when "0000" =>  --ADI
-					if temp = "0011" then
-						tA1 <= IR(8 downto 6);
-						tA3 <= IR(11 downto 9);
-						tC <= '1';
-						tZ <= '1';
-						tALU_T <= '1';
-						tMUX_ALU <= "010";
-					elsif temp = "0100" then
-						tA1 <= "000";
-						tA3 <= "000";
-						tC <= '0';
-						tZ <= '0';
-						tALU_T <= '0';
-						tMUX_ALU <= "000";
-						tDin <= '1';
-					elsif temp = "0101" then
-						tDin <= '0';
-						temp <= "0000";
-					end if;
-				when "0010" =>  --NDU/NDC/NDZ
-				when "0100" =>  --LHI
-				when "0111" =>  --LW
-				when "0101" =>  --SW
-				when "1100" =>  --LM
-				when "1101" =>  --SM
-				when "1000" =>  --BEQ
-				when "1001" =>  --JAL
-				when "1010" =>  --JLR
-				when "1011" =>  --JRI
-				when others =>  --silently fail
-			end case;
-		end process;
-
-	A1 <= tA1;
-	A2 <= tA2;
-	A3 <= tA3;
-	MUX_ALU <= tMUX_ALU;
-	Ain <= tAin;
-	Din <= tDin;
-	inc_PC <= tinc_PC;
-	inc_SP <= tinc_SP;
-	C <= tC;
-	Z <= tZ;
-	MemDin <= tMemDin;
-	Mem_Dout_IR <= tMem_DOut_IR;
-	ALU_T <= tALU_T;
-	MUX_Din <= tMUX_Din;
-	MUX_Ain <= tMUX_Ain;
-	count <= temp;
+		case state is
+			when S0 =>
+				temp <= (others => '0');
+				temp(17) <= '1';
+				temp(7)  <= '1';
+				temp(0)  <= '1';
+			when S1 =>
+				temp <= (others => '0');
+				temp(16) <= '1';
+			when S2 =>
+				temp <= (others => '0');
+				temp(27 downto 25) <= IR(5 downto 3);
+				temp(24 downto 22) <= IR(8 downto 6);
+				temp(21 downto 19) <= IR(11 downto 9);
+				temp(13) <= '1';
+				temp(12) <= '1';
+				temp(4) <= '1';
+			when S3 =>
+				temp <= (others => '0');
+				temp(27 downto 25) <= IR(5 downto 3);
+				temp(24 downto 22) <= IR(8 downto 6);
+				temp(21 downto 19) <= IR(11 downto 9);
+				temp(18) <= '1';
+			when S4 =>
+				temp <= (others => '0');
+				temp(27 downto 25) <= IR(5 downto 3);
+				temp(24 downto 22) <= IR(8 downto 6);
+				temp(21 downto 19) <= IR(11 downto 9);
+				if cy = '1' then
+					temp(18) <= '1';
+				end if;
+			when S5 =>
+				temp <= (others => '0');
+				temp(27 downto 25) <= IR(5 downto 3);
+				temp(24 downto 22) <= IR(8 downto 6);
+				temp(21 downto 19) <= IR(11 downto 9);
+				if zflag = '1' then
+					temp(18) <= '1';
+				end if;
+			when S6 =>
+				temp <= (others => '0');
+				temp(27 downto 25) <= IR(5 downto 3);
+				temp(24 downto 22) <= IR(8 downto 6);
+				temp(21 downto 19) <= IR(11 downto 9);
+				temp(13) <= '1';
+				temp(12) <= '1';
+				temp(11 downto 9) <= "001";
+				temp(4) <= '1';
+			when S7 =>
+				temp <= (others => '0');
+				temp(27 downto 25) <= IR(8 downto 6);
+				temp(21 downto 19) <= IR(11 downto 9);
+				temp(13) <= '1';
+				temp(12) <= '1';
+				temp(11 downto 9) <= "010";
+				temp(4) <= '1';
+			when S8 =>
+				temp <= (others => '0');
+				temp(21 downto 19) <= IR(11 downto 9);
+			when S9 =>
+				temp <= (others => '0');
+				temp(21 downto 19) <= IR(11 downto 9);
+				temp(18) <= '1';
+				temp(6 downto 5) <= "11";
+			when S10 =>
+				temp <= (others => '0');
+				temp(27 downto 25) <= IR(8 downto 6);
+				temp(21 downto 19) <= IR(11 downto 9);
+				temp(18) <= '1';
+				temp(6 downto 5) <= "10";
+				temp(3 downto 2) <= "10";
+			when S11 =>
+				temp <= (others => '0');
+				temp(3 downto 2) <= "10";
+			when S12 =>
+				temp <= (others => '0');
+				temp(24 downto 22) <= IR(11 downto 9);
+				temp(8) <= '1';
+			when S13 =>
+				temp <= (others => '0');
+				temp(27 downto 25) <= IR(11 downto 9);
+				temp(24 downto 22) <= IR(8 downto 6);
+			when S14 =>
+				temp <= (others => '0');
+				temp(27 downto 25) <= "111";
+				temp(21 downto 19) <= "111";
+				temp(11 downto 9) <= "010";
+				temp(4) <= '1';
+			when S15 =>
+				temp <= (others => '0');
+				temp(27 downto 25) <= "111";
+				temp(21 downto 19) <= IR(11 downto 9);
+				temp(11 downto 9) <= "100";
+				temp(4) <= '1';
+			when S16 =>
+				temp <= (others => '0');
+				temp(27 downto 25) <= "111";
+				temp(21 downto 19) <= "111";
+				temp(11 downto 9) <= "011";
+				temp(4) <= '1';
+			when S17 =>
+				temp <= (others => '0');
+				temp(27 downto 25) <= "111";
+				temp(21 downto 19) <= IR(11 downto 9);
+				temp(11 downto 9) <= "010";
+				temp(4) <= '1';
+			when S18 =>
+				temp <= (others => '0');
+				temp(27 downto 25) <= IR(8 downto 6);
+				temp(21 downto 19) <= "111";
+				temp(11 downto 9) <= "010";
+				temp(4) <= '1';
+			when S19 =>
+				temp <= (others => '0');
+				temp(27 downto 25) <= IR(11 downto 9);
+				temp(21 downto 19) <= "111";
+				temp(11 downto 9) <= "011";
+				temp(4) <= '1';
+			when S20 =>
+				temp <= (others => '0');
+				temp(27 downto 25) <= IR(8 downto 6);
+				temp(21 downto 19) <= IR(11 downto 9);
+				temp(13) <= '1';
+				temp(11 downto 9) <= "010";
+				temp(4) <= '1';
+			when S21 =>
+				temp <= (others => '0');
+				temp(27 downto 25) <= IR(8 downto 6);
+				temp(24 downto 22) <= IR(11 downto 9);
+				temp(11 downto 9) <= "010";
+				temp(4) <= '1';
+			when S22 =>
+				temp <= (others => '0');
+				temp(27 downto 25) <= IR(11 downto 9);
+				temp(11 downto 9) <= "101";
+				temp(4) <= '1';
+				temp(3 downto 2) <= "10";
+				temp(0) <= '1';
+			when S23 =>
+				temp <= (others => '0');
+			when S24 =>
+				temp <= (others => '0');
+				if IR(0) = '1' then
+					temp(18) <= '1';
+				end if;
+				temp(6 downto 5) <= "10";
+			when S25 =>
+				temp <= (others => '0');
+				temp(21 downto 19) <= "001";
+			when S26 =>
+				temp <= (others => '0');
+				temp(21 downto 19) <= "001";
+				if IR(1) = '1' then
+					temp(18) <= '1';
+				end if;
+				temp(6 downto 5) <= "10";
+			when S27 =>
+				temp <= (others => '0');
+				temp(21 downto 19) <= "010";
+			when S28 =>
+				temp <= (others => '0');
+				temp(21 downto 19) <= "010";
+				if IR(2) = '1' then
+					temp(18) <= '1';
+				end if;
+				temp(6 downto 5) <= "10";
+			when S29 =>
+				temp <= (others => '0');
+				temp(21 downto 19) <= "011";
+			when S30 =>
+				temp <= (others => '0');
+				temp(21 downto 19) <= "011";
+				if IR(3) = '1' then
+					temp(18) <= '1';
+				end if;
+				temp(6 downto 5) <= "10";
+			when S31 =>
+				temp <= (others => '0');
+				temp(21 downto 19) <= "100";
+			when S32 =>
+				temp <= (others => '0');
+				temp(21 downto 19) <= "100";
+				if IR(4) = '1' then
+					temp(18) <= '1';
+				end if;
+				temp(6 downto 5) <= "10";
+			when S33 =>
+				temp <= (others => '0');
+				temp(21 downto 19) <= "101";
+			when S34 =>
+				temp <= (others => '0');
+				temp(21 downto 19) <= "101";
+				if IR(5) = '1' then
+					temp(18) <= '1';
+				end if;
+				temp(6 downto 5) <= "10";
+			when S35 =>
+				temp <= (others => '0');
+				temp(21 downto 19) <= "110";
+			when S36 =>
+				temp <= (others => '0');
+				temp(21 downto 19) <= "110";
+				if IR(6) = '1' then
+					temp(18) <= '1';
+				end if;
+				temp(6 downto 5) <= "10";
+			when S37 =>
+				temp <= (others => '0');
+				temp(21 downto 19) <= "111";
+			when S38 =>
+				temp <= (others => '0');
+				temp(21 downto 19) <= "111";
+				if IR(7) = '1' then
+					temp(18) <= '1';
+				end if;
+				temp(6 downto 5) <= "10";
+			when S39 =>
+				temp <= (others => '0');
+				temp(27 downto 25) <= IR(11 downto 9);
+				temp(4) <= '1';
+			when S40 =>
+				temp <= (others => '0');
+				temp(15) <= '1';
+				temp(3 downto 2) <= "01";
+			when S41 =>
+				temp <= (others => '0');
+				temp(14) <= '1';
+				if IR(0) = '1' then
+					temp(8) <= '1';
+				end if;
+				temp(6 downto 5) <= "10";
+			when S42 =>
+				temp <= (others => '0');
+				temp(24 downto 22) <= "001";
+				temp(15) <= '1';
+				temp(3 downto 2) <= "01";
+			when S43 =>
+				temp <= (others => '0');
+				temp(24 downto 22) <= "001";
+				temp(14) <= '1';
+				if IR(1) = '1' then
+					temp(8) <= '1';
+				end if;
+				temp(6 downto 5) <= "10";
+			when S44 =>
+				temp <= (others => '0');
+				temp(24 downto 22) <= "010";
+				temp(15) <= '1';
+				temp(3 downto 2) <= "01";
+			when S45 =>
+				temp <= (others => '0');
+				temp(24 downto 22) <= "010";
+				temp(14) <= '1';
+				if IR(2) = '1' then
+					temp(8) <= '1';
+				end if;
+				temp(6 downto 5) <= "10";
+			when S46 =>
+				temp <= (others => '0');
+				temp(24 downto 22) <= "011";
+				temp(15) <= '1';
+				temp(3 downto 2) <= "01";
+			when S47 =>
+				temp <= (others => '0');
+				temp(24 downto 22) <= "011";
+				temp(14) <= '1';
+				if IR(3) = '1' then
+					temp(8) <= '1';
+				end if;
+				temp(6 downto 5) <= "10";
+			when S48 =>
+				temp <= (others => '0');
+				temp(24 downto 22) <= "100";
+				temp(15) <= '1';
+				temp(3 downto 2) <= "01";
+			when S49 =>
+				temp <= (others => '0');
+				temp(24 downto 22) <= "100";
+				temp(14) <= '1';
+				if IR(4) = '1' then
+					temp(8) <= '1';
+				end if;
+				temp(6 downto 5) <= "10";
+			when S50 =>
+				temp <= (others => '0');
+				temp(24 downto 22) <= "101";
+				temp(15) <= '1';
+				temp(3 downto 2) <= "01";
+			when S51 =>
+				temp <= (others => '0');
+				temp(24 downto 22) <= "101";
+				temp(14) <= '1';
+				if IR(5) = '1' then
+					temp(8) <= '1';
+				end if;
+				temp(6 downto 5) <= "10";
+			when S52 =>
+				temp <= (others => '0');
+				temp(24 downto 22) <= "110";
+				temp(15) <= '1';
+				temp(3 downto 2) <= "01";
+			when S53 =>
+				temp <= (others => '0');
+				temp(24 downto 22) <= "110";
+				temp(14) <= '1';
+				if IR(6) = '1' then
+					temp(8) <= '1';
+				end if;
+				temp(6 downto 5) <= "10";
+			when S54 =>
+				temp <= (others => '0');
+				temp(24 downto 22) <= "111";
+				temp(15) <= '1';
+				temp(3 downto 2) <= "01";
+			when S55 =>
+				temp <= (others => '0');
+				temp(24 downto 22) <= "111";
+				temp(14) <= '1';
+				if IR(7) = '1' then
+					temp(8) <= '1';
+				end if;
+				temp(6 downto 5) <= "10";
+			when S56 =>
+				temp <= (others => '0');
+				temp(27 downto 25) <= IR(5 downto 3);
+				temp(24 downto 22) <= IR(8 downto 6);
+				temp(21 downto 19) <= IR(11 downto 9);
+				temp(13) <= '1';
+				temp(12) <= '1';
+				temp(4) <= '1';
+				temp(1) <= '1';
+			when others =>
+				temp <= (others => '0');
+		end case;
+		S <= temp;
+	end process;
+	
+	
+	process(state)
+	begin
+		
+	end process;
 end beh;
