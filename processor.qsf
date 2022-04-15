@@ -52,7 +52,7 @@ set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_
 set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_signal_integrity
 set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_boundary_scan
 set_global_assignment -name EDA_TEST_BENCH_ENABLE_STATUS TEST_BENCH_MODE -section_id eda_simulation
-set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH "Testbench-RegisterBank" -section_id eda_simulation
+set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH "Testbench-Controller" -section_id eda_simulation
 set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_simulation
 set_global_assignment -name EDA_TEST_BENCH_NAME Testbench -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id Testbench
@@ -61,6 +61,10 @@ set_global_assignment -name EDA_TEST_BENCH_NAME "Testbench-RegisterBank" -sectio
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id "Testbench-RegisterBank"
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME Testbench -section_id "Testbench-RegisterBank"
 
+set_global_assignment -name VHDL_FILE Controller/Testbench.vhdl
+set_global_assignment -name VHDL_FILE Controller/DUT.vhdl
+set_global_assignment -name VHDL_FILE IR/IR.vhdl
+set_global_assignment -name VHDL_FILE Controller/controller.vhdl
 set_global_assignment -name EDA_TEST_BENCH_FILE ALU/TRACEFILE.txt -section_id Testbench
 set_global_assignment -name EDA_TEST_BENCH_FILE ALU/Testbench.vhdl -section_id Testbench
 set_global_assignment -name EDA_TEST_BENCH_FILE RegisterBank/TRACEFILE.txt -section_id "Testbench-RegisterBank"
