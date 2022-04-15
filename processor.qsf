@@ -74,4 +74,3 @@ set_global_assignment -name EDA_DESIGN_INSTANCE_NAME controller -section_id "Tes
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME Testbench -section_id "Testbench-Controller"
 set_global_assignment -name EDA_TEST_BENCH_FILE Controller/Testbench.vhdl -section_id "Testbench-Controller"
 set_global_assignment -name EDA_TEST_BENCH_FILE Controller/TRACEFILE.txt -section_id "Testbench-Controller"
-set_global_assignment -name VHDL_FILE Controller/counter.vhdl

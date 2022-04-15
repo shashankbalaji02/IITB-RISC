@@ -18,11 +18,12 @@ architecture beh of controller is
 	signal opcode: std_logic_vector(3 downto 0);
 	signal mode: std_logic_vector(1 downto 0);
 	signal temp: std_logic_vector(27 downto 0);
+	signal temp1, temp2: std_logic := '1';
 	
 begin
 	
-	opcode <= IR(15 downto 12);
-	mode <= IR(1 downto 0);
+	opcode(3 downto 0) <= IR(15 downto 12);
+	mode(1 downto 0) <= IR(1 downto 0);
 	
 	process(clk, next_state) --next state progress
 	begin
@@ -372,8 +373,173 @@ begin
 	end process;
 	
 	
-	process(state)
+	process(state, opcode, mode)
 	begin
+		next_state <= state;
 		
+		case state is
+			when S0 =>
+				next_state <= S1;
+			when S1 =>
+				if opcode = "0001" then --ADd/ADC/ADZ/ADL
+					if mode = "11" then
+						next_state <= S6;
+					else
+						next_state <= S2;
+					end if;
+				elsif opcode = "0000" then --ADI
+					next_state <= S7;
+				elsif opcode = "0010" then --NDU/NDC/NDZ
+					next_state <= S56;
+				elsif opcode = "0011" then --LHI
+					next_state <= S8;
+				elsif opcode = "0111" then --LW
+					next_state <= S20;
+				elsif opcode = "0101" then --SW
+					next_state <= S21;
+				elsif opcode = "1100" then --LM
+					next_state <= S22;
+				elsif opcode = "1101" then --SM
+					next_state <= S39;
+				elsif opcode = "1000" then --BEQ
+					next_state <= S13;
+				elsif opcode = "1001" then --JAL
+					next_state <= S15;
+				elsif opcode = "1010" then --JLR
+					next_state <= S17;
+				elsif opcode = "1011" then --JRI
+					next_state <= S19;
+				else
+					next_state <= S1;
+				end if;
+			when S2 =>
+				if mode = "00" then
+					next_state <= S3;
+				elsif mode = "01" then
+					next_state <= S4;
+				elsif mode = "10" then
+					next_state <= S5;
+				end if;
+			when S3 =>
+				if opcode = "1001" and temp1 = '1' then
+					temp1 <= '0';
+					next_state <= S16;
+				elsif opcode = "1010" and temp2 = '1' then
+					temp2 <= '0';
+					next_state <= S18;
+				else
+					next_state <= S0;
+				end if;
+			when S4 =>
+				next_state <= S0;
+			when S5 =>
+				next_state <= S0;
+			when S6 =>
+				next_state <= S3;
+			when S7 =>
+				next_state <= S3;
+			when S8 =>
+				next_state <= S9;
+			when S9 =>
+				next_state <= S0;
+			when S10 =>
+				next_state <= S0;
+			when S11 =>
+				next_state <= S12;
+			when S12 =>
+				next_state <= S0;
+			when S13 =>
+				if zflag = '1' then
+					next_state <= S14;
+				else 
+					next_state <= S3;
+				end if;
+			when S14 =>
+				next_state <= S3;
+			when S15 =>
+				next_state <= S3;
+			when S16 =>
+				next_state <= S3;
+			when S17 =>
+				next_state <= S3;
+			when S18 =>
+				next_state <= S3;
+			when S19 =>
+				next_state <= S3;
+			when S20 =>
+				next_state <= S10;
+			when S21 =>
+				next_state <= S11;
+			when S22 =>
+				next_state <= S23;
+			when S23 =>
+				next_state <= S24;
+			when S24 =>
+				next_state <= S25;
+			when S25 =>
+				next_state <= S26;
+			when S26 =>
+				next_state <= S27;
+			when S27 =>
+				next_state <= S28;
+			when S28 =>
+				next_state <= S29;
+			when S29 =>
+				next_state <= S30;
+			when S30 =>
+				next_state <= S31;
+			when S31 =>
+				next_state <= S32;
+			when S32 =>
+				next_state <= S33;
+			when S33 =>
+				next_state <= S34;
+			when S34 =>
+				next_state <= S35;
+			when S35 =>
+				next_state <= S36;
+			when S36 =>
+				next_state <= S37;
+			when S37 =>
+				next_state <= S38;
+			when S38 =>
+				next_state <= S3;
+			when S39 =>
+				next_state <= S40;
+			when S40 =>
+				next_state <= S41;
+			when S41 =>
+				next_state <= S42;
+			when S42 =>
+				next_state <= S43;
+			when S43 =>
+				next_state <= S44;
+			when S44 =>
+				next_state <= S45;
+			when S45 =>
+				next_state <= S46;
+			when S46 =>
+				next_state <= S47;
+			when S47 =>
+				next_state <= S48;
+			when S48 =>
+				next_state <= S49;
+			when S49 =>
+				next_state <= S50;
+			when S50 =>
+				next_state <= S51;
+			when S51 =>
+				next_state <= S52;
+			when S52 =>
+				next_state <= S53;
+			when S53 =>
+				next_state <= S54;
+			when S54 =>
+				next_state <= S55;
+			when S55 =>
+				next_state <= S3;
+			when others =>
+				next_state <= S0;
+			end case;
 	end process;
 end beh;
