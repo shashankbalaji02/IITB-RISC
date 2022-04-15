@@ -373,7 +373,7 @@ begin
 	end process;
 	
 	
-	process(state, opcode, mode)
+	process(state, opcode, mode, temp1, temp2, zflag, cy)
 	begin
 		next_state <= state;
 		

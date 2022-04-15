@@ -21,14 +21,18 @@ entity datapath is
 		  ALU_op: in std_logic;
 		  IRout: out std_logic_vector(15 downto 0);
 		  Cout: out std_logic;
-		  Zout: out std_logic);
+		  Zout: out std_logic;
+		  memory_address: out std_logic_vector(15 downto 0);
+		  to_memory: out std_logic_vector(15 downto 0);
+		  memory_WE_out: out std_logic;
+		  from_memory: in std_logic_vector(15 downto 0));
 end entity;
 
 architecture behavioral of datapath is
 	signal A, B, registers_Din, shifted_B, ALU_B, extended_imm6, extended_imm9: std_logic_vector(15 downto 0);
 	signal PC_in, PC_out, bank_to_PC, inc_to_PC_data,ALU_result, temp_out: std_logic_vector(15 downto 0);
-	signal memory_address, zero_extend_imm9, inc_to_SP_data: std_logic_vector(15 downto 0);
-	signal SP_in, SP_out, memory_out, IR_out: std_logic_vector(15 downto 0);
+	signal zero_extend_imm9, inc_to_SP_data: std_logic_vector(15 downto 0);
+	signal SP_in, SP_out, IR_out: std_logic_vector(15 downto 0);
 	signal PC_WE, bank_PC_WE, SP_WE, C, Z: std_logic;
 	
 	component reg is
@@ -60,16 +64,10 @@ architecture behavioral of datapath is
 				S: out std_logic_vector(15 downto 0);
 				C, Z: out std_logic);
 	end component;
-	component RAM is
-		port(address: in std_logic_vector(15 downto 0);
-			  data_in: in std_logic_vector(15 downto 0);
-			  write_enable: in std_logic;
-			  data_out: out std_logic_vector(15 downto 0));
-	end component;
 
 begin
 	IR: reg
-		port map(memory_out, IR_WE, IR_out);
+		port map(from_memory, IR_WE, IR_out);
 	PC: reg
 		port map(PC_in, PC_WE, PC_out);
 	registers: register_bank
@@ -86,8 +84,6 @@ begin
 		port map(ALU_result, ALU_out, temp_out);
 	SP: reg
 		port map(SP_in, SP_WE, SP_out);
-	memory: RAM
-		port map(memory_address, B, memory_WE, memory_out);
 	
 	PC_WE <= inc_to_PC or bank_PC_WE;
 	PC_in <= bank_to_PC when (bank_PC_WE = '1') else
@@ -121,12 +117,15 @@ begin
 							temp_out when (memory_address_select = "10") else
 							(others => 'X');
 	
+	to_memory <= B;
+	memory_WE_out <= memory_WE;
+	
 	zero_extend_imm9(15 downto 7) <= IR_out(8 downto 0);
 	zero_extend_imm9(6 downto 0) <= (others => '0');
 	
 	registers_Din <= temp_out when (register_bank_Din_select = "00") else
 						  SP_out when (register_bank_Din_select = "01") else
-						  memory_out when (register_bank_Din_select = "10") else
+						  from_memory when (register_bank_Din_select = "10") else
 						  (others => 'X');
 	
 	IRout <= IR_out;
