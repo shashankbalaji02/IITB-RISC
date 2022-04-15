@@ -3,14 +3,14 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity incrementer is
-	port (A: in std_logic_vector(15 downto 0);
-			S: out std_logic_vector(15 downto 0));
-end entity incrementer;
+	port (Din: in std_logic_vector(15 downto 0);
+			RE: in std_logic;
+			Dout: out std_logic_vector(15 downto 0));
+end entity;
 
-architecture beh of incrementer is
-	signal temp: integer;
-	
+architecture behavioral of incrementer is
+	signal temp: std_logic_vector(15 downto 0);
 begin
-	temp <= to_integer(unsigned(A)) + 1;
-	S <= std_logic_vector(to_unsigned(temp, 16));
-end beh;
+	temp <= std_logic_vector(unsigned(Din) + 1) when (RE = '1');
+	Dout <= temp;
+end architecture;
