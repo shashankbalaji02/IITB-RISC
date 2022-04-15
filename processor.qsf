@@ -39,7 +39,7 @@
 
 set_global_assignment -name FAMILY "MAX V"
 set_global_assignment -name DEVICE AUTO
-set_global_assignment -name TOP_LEVEL_ENTITY register_bank
+set_global_assignment -name TOP_LEVEL_ENTITY datapath
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 20.1.1
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "19:15:53  APRIL 08, 2022"
 set_global_assignment -name LAST_QUARTUS_VERSION "20.1.1 Lite Edition"
@@ -61,14 +61,13 @@ set_global_assignment -name EDA_TEST_BENCH_NAME "Testbench-RegisterBank" -sectio
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id "Testbench-RegisterBank"
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME Testbench -section_id "Testbench-RegisterBank"
 
-set_global_assignment -name VHDL_FILE Controller/Testbench.vhdl
-set_global_assignment -name VHDL_FILE Controller/DUT.vhdl
-set_global_assignment -name VHDL_FILE IR/IR.vhdl
-set_global_assignment -name VHDL_FILE Controller/controller.vhdl
 set_global_assignment -name EDA_TEST_BENCH_FILE ALU/TRACEFILE.txt -section_id Testbench
 set_global_assignment -name EDA_TEST_BENCH_FILE ALU/Testbench.vhdl -section_id Testbench
 set_global_assignment -name EDA_TEST_BENCH_FILE RegisterBank/TRACEFILE.txt -section_id "Testbench-RegisterBank"
 set_global_assignment -name EDA_TEST_BENCH_FILE RegisterBank/Testbench.vhdl -section_id "Testbench-RegisterBank"
+set_global_assignment -name VHDL_FILE ALU/fa.vhdl
+set_global_assignment -name VHDL_FILE ALU/adder_4.vhdl
+set_global_assignment -name VHDL_FILE ALU/adder_16.vhdl
 set_global_assignment -name VHDL_FILE RAM/RAM.vhdl
 set_global_assignment -name VHDL_FILE ALU/ALU.vhdl
 set_global_assignment -name VHDL_FILE registers/flags.vhdl

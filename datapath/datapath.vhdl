@@ -77,11 +77,11 @@ begin
 	PC_incrementer: incrementer
 		port map(PC_out, PC_to_inc, inc_to_PC_data);
 	SP_incrementer: incrementer
-		port map(SP_in, SP_to_inc, inc_to_SP_data);
+		port map(SP_out, SP_to_inc, inc_to_SP_data);
 	flags_register: flags
 		port map(C, Z, CE, ZE, Cout, Zout);
 	ALU_component: ALU
-		port map(A, B, ALU_op, ALU_result, C, Z);
+		port map(A, ALU_B, ALU_op, ALU_result, C, Z);
 	T: reg
 		port map(ALU_result, ALU_out, temp_out);
 	SP: reg
@@ -103,12 +103,10 @@ begin
 	shifted_B(15 downto 1) <= B(14 downto 0);
 
 	extended_imm6(5 downto 0) <= IR_out(5 downto 0);
-	extended_imm6(15 downto 6) <= (others => '0') when (IR_out(5) = '0') else
-											(others => '1') when (IR_out(5) = '1');
+	extended_imm6(15 downto 6) <= (others => IR_out(5));
 
 	extended_imm9(8 downto 0) <= IR_out(8 downto 0);
-	extended_imm9(15 downto 8) <= (others => '0') when (IR_out(8) = '0') else
-											(others => '1') when (IR_out(8) = '1');
+	extended_imm9(15 downto 8) <= (others => IR_out(8));
 
 	ALU_B <= B when (ALU_input_select = "000") else
 				shifted_B when (ALU_input_select = "001") else
@@ -130,4 +128,6 @@ begin
 						  SP_out when (register_bank_Din_select = "01") else
 						  memory_out when (register_bank_Din_select = "10") else
 						  (others => 'X');
+	
+	IRout <= IR_out;
 end architecture;
