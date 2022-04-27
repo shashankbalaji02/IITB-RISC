@@ -121,11 +121,12 @@ begin
 	memory_WE_out <= memory_WE;
 	
 	zero_extend_imm9(15 downto 7) <= IR_out(8 downto 0);
-	zero_extend_imm9(6 downto 0) <= (others => '0');
+	zero_extend_imm9(6 downto 0) <= "0000000";
 	
 	registers_Din <= temp_out when (register_bank_Din_select = "00") else
 						  SP_out when (register_bank_Din_select = "01") else
 						  from_memory when (register_bank_Din_select = "10") else
+						  zero_extend_imm9 when (register_bank_Din_select = "11") else
 						  (others => 'X');
 	
 	IRout <= IR_out;

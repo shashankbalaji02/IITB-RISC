@@ -113,6 +113,7 @@ begin
 				temp <= (others => '0');
 				temp(24 downto 22) <= IR(11 downto 9);
 				temp(8) <= '1';
+				temp(3 downto 2) <= "10";
 			when S13 =>
 				temp <= (others => '0');
 				temp(27 downto 25) <= IR(11 downto 9);
